@@ -3,12 +3,10 @@ package code.baidu;
 import code.core.Event;
 import code.core.Subscriber;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 百度的订阅者
  */
-@Event
+@Event(priority = 10)
 public class BaiduSubscriber implements Subscriber<Baidu> {
 
     @Override

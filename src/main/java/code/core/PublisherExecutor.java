@@ -1,11 +1,9 @@
 package code.core;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.reflections.Reflections;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.Predicate;
 
 public class PublisherExecutor extends EventPublisher {
@@ -13,32 +11,32 @@ public class PublisherExecutor extends EventPublisher {
     /**
      * 线程池默认参数
      */
-    private static final int DEFAULT_CORE_POOL_SIZE = 10;
-    private static final int DEFAULT_MAXIMUM_POOL_SIZE = 100;
-    private static final int DEFAULT_KEEP_ALIVE_TIME = 1;
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
-    private static final int DEFAULT_BLOCKING_QUEUE_CAPACITY = 100;
+//    private static final int DEFAULT_CORE_POOL_SIZE = 10;
+//    private static final int DEFAULT_MAXIMUM_POOL_SIZE = 100;
+//    private static final int DEFAULT_KEEP_ALIVE_TIME = 1;
+//    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
+//    private static final int DEFAULT_BLOCKING_QUEUE_CAPACITY = 100;
     /**
      * 线程池可配置参数
      */
-    private int corePoolSize = DEFAULT_CORE_POOL_SIZE;
-    private int maximumPoolSize = DEFAULT_MAXIMUM_POOL_SIZE;
-    private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
-    private TimeUnit unit = DEFAULT_TIME_UNIT;
+//    private int corePoolSize = DEFAULT_CORE_POOL_SIZE;
+//    private int maximumPoolSize = DEFAULT_MAXIMUM_POOL_SIZE;
+//    private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
+//    private TimeUnit unit = DEFAULT_TIME_UNIT;
 
     /**
      * 有界队列
      */
-    private BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(DEFAULT_BLOCKING_QUEUE_CAPACITY);
+    // private BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(DEFAULT_BLOCKING_QUEUE_CAPACITY);
 
-    private ExecutorService executorService = new ThreadPoolExecutor(corePoolSize,
-            maximumPoolSize,
-            keepAliveTime,
-            unit,
-            workQueue, new ThreadFactoryBuilder()
-            .setNameFormat("PublisherExecutor" + "-%d")
-            .setDaemon(false).build(),
-            (r, executor) -> executor.shutdown());
+//    private ExecutorService executorService = new ThreadPoolExecutor(corePoolSize,
+//            maximumPoolSize,
+//            keepAliveTime,
+//            unit,
+//            workQueue, new ThreadFactoryBuilder()
+//            .setNameFormat("PublisherExecutor" + "-%d")
+//            .setDaemon(false).build(),
+//            (r, executor) -> executor.shutdown());
 
     private enum SinglePublisherExecutor {
         SINGLE_PUBLISHER_EXECUTOR;
@@ -115,11 +113,17 @@ public class PublisherExecutor extends EventPublisher {
                                                 Class<?> cls =
                                                         Class.forName(name, false, getClass().getClassLoader());
                                                 if (eventObject.getClass().isAssignableFrom(cls)) {
+                                                    // 这里不立马执行，放进消息队列中执行
+                                                    Event event = classType.getAnnotation(Event.class);
+                                                    Thread thread = new Thread(() -> subscriber.handEvent(eventObject)
+                                                            , eventObject.getClass().getSimpleName());
+                                                    thread.setPriority(event.priority());
+                                                    MessageQueue.messages.add(thread);
                                                     // 这里可以异步执行
                                                     // 不明白 当使用 executorService 的时候会一直执行，拒绝策略也不执行
-                                                    CompletableFuture
-                                                            .runAsync(() -> subscriber.handEvent(eventObject))
-                                                            .get(10,TimeUnit.SECONDS);
+//                                                    CompletableFuture
+//                                                            .runAsync(() -> subscriber.handEvent(eventObject))
+//                                                            .get(10,TimeUnit.SECONDS);
 //                                                    CompletableFuture completableFuture =
 //                                                            CompletableFuture.runAsync(() -> {
 //                                                                        subscriber.handEvent(eventObject);
@@ -129,9 +133,12 @@ public class PublisherExecutor extends EventPublisher {
 //                                                    completableFuture.join();
 //                                                    completableFuture.get(19, TimeUnit.SECONDS);
                                                 }
-                                            } catch (ClassNotFoundException | TimeoutException
-                                                    | InterruptedException | ExecutionException ex) {
-                                                // executorService.shutdown();
+//                                            } catch (ClassNotFoundException | TimeoutException
+//                                                    | InterruptedException | ExecutionException ex) {
+//                                                // executorService.shutdown();
+//                                                ex.printStackTrace();
+//                                            }
+                                            } catch (ClassNotFoundException ex) {
                                                 ex.printStackTrace();
                                             }
                                         }

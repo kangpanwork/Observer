@@ -6,7 +6,7 @@ import code.core.Subscriber;
 /**
  * 谷歌的订阅者
  */
-@Event
+@Event(priority = 5)
 public class GoogleSubscriber implements Subscriber<Google> {
 
     @Override
@@ -17,6 +17,6 @@ public class GoogleSubscriber implements Subscriber<Google> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        google.getMessage().forEach(System.out::println);
+        System.out.println(google.getMessage());
     }
 }

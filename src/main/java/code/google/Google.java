@@ -1,26 +1,29 @@
 package code.google;
 
+import code.core.Message;
+
 import java.util.EventObject;
-import java.util.List;
 
 /**
  * 谷歌的事件
  */
-public class Google extends EventObject {
+public class Google extends EventObject implements Message {
 
-    private List<String> message;
+    private String message;
 
-    public List<String> getMessage() {
+    public Google(String source) {
+        super(source);
+        this.message = source;
+    }
+
+    @Override
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(List<String> message) {
+    @Override
+    public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Google(List<String> source) {
-        super(source);
-        this.message = source;
     }
 
 }
