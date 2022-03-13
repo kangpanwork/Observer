@@ -8,6 +8,7 @@ import java.util.concurrent.PriorityBlockingQueue;
  * 消息队列
  */
 public class MessageQueue {
+    // 优先队列 保证消息优先级高的先执行（数字越小）
     static Comparator<Thread> cmp = Comparator.comparingInt(Thread::getPriority);
     public static BlockingQueue<Thread> messages = new PriorityBlockingQueue(100, cmp);
 
