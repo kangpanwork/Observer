@@ -1,4 +1,4 @@
-package code.core;
+package code.core.message;
 
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
@@ -18,7 +18,8 @@ public class MessageQueue {
     public static void consumptionMessage() {
         while (!messages.isEmpty()) {
             Thread thread = messages.poll();
-            thread.run();
+            System.out.println(thread.getName());
+            thread.start();
         }
     }
 }

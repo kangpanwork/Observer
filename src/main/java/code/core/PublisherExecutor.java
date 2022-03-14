@@ -1,5 +1,6 @@
 package code.core;
 
+import code.core.message.MessageQueue;
 import org.reflections.Reflections;
 
 import java.lang.reflect.*;
@@ -152,7 +153,7 @@ public class PublisherExecutor extends EventPublisher {
 
     private boolean isCglibProxyName(Class<?> cls) {
         String name = cls.getSimpleName();
-        return name != null && name.contains("$$");
+        return name.contains("$$");
     }
 
 }

@@ -1,6 +1,6 @@
 package code.baidu;
 
-import code.core.Message;
+import code.core.message.Message;
 
 import java.util.EventObject;
 

@@ -1,4 +1,6 @@
-package code.core;
+package code.core.message;
+
+import code.core.AutoPublish;
 
 public interface Message {
     @AutoPublish
