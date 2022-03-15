@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.EventObject;
 
 public class PublisherExecutor extends EventPublisher {
 
@@ -59,6 +60,8 @@ public class PublisherExecutor extends EventPublisher {
     private PublisherExecutor() {
         Reflections reflections = new Reflections("code");
         Set<Class<?>> set = reflections.getTypesAnnotatedWith(Event.class);
+        Set<Class<?>> other = reflections.getTypesAnnotatedWith(MultipleEvent.class);
+        set.addAll(other);
         Predicate<Class<?>> filter = cls -> {
             if (!Modifier.isInterface(cls.getModifiers()) && !Modifier.isAbstract(cls.getModifiers())) {
                 if (EventListener.class.isAssignableFrom(cls)) {
@@ -110,7 +113,6 @@ public class PublisherExecutor extends EventPublisher {
                                             Type argument = arguments != null && arguments.length > 0 ? arguments[0] : null;
                                             String name = argument.getTypeName();
                                             try {
-
                                                 Class<?> cls =
                                                         Class.forName(name, false, getClass().getClassLoader());
                                                 if (eventObject.getClass().isAssignableFrom(cls)) {
